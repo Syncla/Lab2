@@ -1,14 +1,35 @@
 package base;
-import java.util.*;
+import java.util.ArrayList;
 public class Deck extends Card {
-	ArrayList<Card> Deck=new ArrayList<Card>();
+	
+	
+	ArrayList<Card> deck=new ArrayList<Card>();
 	public Deck(){
-		
+		super();
+		for (Card.Suite suite : Card.Suite.values()){
+			for (Card.Rank rank : Card.Rank.values()){
+				deck.add(new Card(rank,suite));
+			}
+		}
+		shuffle();
+	}
+	public int cardsLeft(){
+		return deck.size();
 	}
 	public void shuffle(){
-		
+		//Using Fisher Yates shuffle
+		int size=deck.size();
+		int randomIndex;
+		for (int i=0;i<size;i++){
+			do{
+				randomIndex=(int)(Math.random()*size);
+			}while (randomIndex==i);
+			Card tempCard=deck.get(randomIndex);
+			deck.set(randomIndex, deck.get(i));
+			deck.set(i, tempCard);
+		}
 	}
 	public Card draw(){
-		return this.Deck.remove(0);
+		return this.deck.remove(0);
 	}
 }
