@@ -9,7 +9,7 @@ public class testing {
 			h.addCard(d.draw());
 		}
 		h.sortRank();
-		//h.sortSuite(h);
+		//h.sortSuit();
 		System.out.println(h);
 		System.out.println(Hand.judge(h));
 		

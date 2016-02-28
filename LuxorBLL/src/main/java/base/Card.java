@@ -2,10 +2,10 @@ package base;
 
 public class Card {
 	private Rank rank;
-	private Suite suite;
+	private Suit suit;
 	public static enum Rank {
 		ACE(1), TWO(2), THREE(3), FOUR(4), FIVE(5), SIX(6),
-		SEVEN(7), EIGHT(8), NINE(9), TEN(10), JESTER(11),
+		SEVEN(7), EIGHT(8), NINE(9), TEN(10), JACK(11),
 		QUEEN(12), KING(13);
 		private int rankValue;
 		private Rank(int rankValue){
@@ -13,25 +13,26 @@ public class Card {
 		}
 		
 	}
-	public static enum Suite{
+	public static enum Suit{
 		Hearts(1), Spade(2), Club(3), Diamonds(4);
 		//Int values are for sorting
 		private int suiteValue;
-		private Suite(int suiteValue){
+		private Suit(int suiteValue){
 			this.suiteValue=suiteValue;
 		}
 	}
-	public Card(Rank rank,Suite suite){
+	public Card(Card.Rank rank,Card.Suit suit){
 		this.rank=rank;
-		this.suite=suite;
+		this.suit=suit;
 	}
+	
 	public Rank getRank(){
-		return rank;
+		return this.rank;
 	}
-	public Suite getSuite(){
-		return suite;
+	public Suit getSuit(){
+		return this.suit;
 	}
 	public String toString(){
-		return this.getRank()+" of "+this.getSuite();
+		return this.getRank()+" of "+this.getSuit();
 	}
 }

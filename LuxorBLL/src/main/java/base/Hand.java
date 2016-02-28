@@ -31,7 +31,7 @@ public class Hand {
 		} while (swapped);
 	}
 
-	public void sortSuite() {
+	public void sortSuit() {
 		// Sorts based on suite
 		// To sort by both suite and rank, call sortRank and then sortSuite
 		int size = this.hand.size();
@@ -39,7 +39,7 @@ public class Hand {
 		do {
 			swapped = false;
 			for (int index = 0; index < size - 1; index++) {
-				if (this.hand.get(index).getSuite().ordinal() < this.hand.get(index + 1).getSuite().ordinal()) {
+				if (this.hand.get(index).getSuit().ordinal() < this.hand.get(index + 1).getSuit().ordinal()) {
 					Card tempCard = this.hand.get(index);
 					this.hand.set(index, this.hand.get(index + 1));
 					this.hand.set(index + 1, tempCard);
@@ -82,10 +82,10 @@ public class Hand {
 		return true;
 	}
 
-	public boolean suiteCheck(Hand currentHand) {
+	public boolean suitCheck(Hand currentHand) {
 		// Checks if all the cards are of the same suite
 		for (int index = 0; index < currentHand.hand.size() - 1; index++) {
-			if (currentHand.hand.get(index).getSuite() != currentHand.hand.get(index + 1).getSuite()) {
+			if (currentHand.hand.get(index).getSuit() != currentHand.hand.get(index + 1).getSuit()) {
 				return false;
 			}
 		}
@@ -133,7 +133,7 @@ public class Hand {
 	}
 
 	public HandStrength isStraightFlush(Hand currentHand) {
-		if (suiteCheck(currentHand) && inOrderDecending(currentHand)) {
+		if (suitCheck(currentHand) && inOrderDecending(currentHand)) {
 			return (new HandStrength(currentHand.hand.get(0).getRank(),
 					currentHand.hand.get(currentHand.hand.size() - 1).getRank(), new ArrayList<Card>(),
 					"Straight Flush", 90));
@@ -169,7 +169,7 @@ public class Hand {
 	}
 
 	public HandStrength isFlush(Hand currentHand) {
-		if (suiteCheck(currentHand)) {
+		if (suitCheck(currentHand)) {
 			Card.Rank highCard = currentHand.hand.get(0).getRank();
 			Card.Rank lowCard = currentHand.hand.get(1).getRank();
 			ArrayList<Card> kickers = new ArrayList<Card>();

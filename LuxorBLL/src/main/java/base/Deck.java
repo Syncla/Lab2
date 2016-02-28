@@ -5,9 +5,9 @@ public class Deck  {
 	
 	ArrayList<Card> deck=new ArrayList<Card>();
 	public Deck(){
-		for (Card.Suite suite : Card.Suite.values()){
+		for (Card.Suit suit : Card.Suit.values()){
 			for (Card.Rank rank : Card.Rank.values()){
-				deck.add(new Card(rank,suite));
+				deck.add(new Card(rank,suit));
 			}
 		}
 		shuffle();
