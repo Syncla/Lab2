@@ -1,11 +1,10 @@
 package base;
 import java.util.ArrayList;
-public class Deck extends Card {
+public class Deck  {
 	
 	
 	ArrayList<Card> deck=new ArrayList<Card>();
 	public Deck(){
-		super();
 		for (Card.Suite suite : Card.Suite.values()){
 			for (Card.Rank rank : Card.Rank.values()){
 				deck.add(new Card(rank,suite));
