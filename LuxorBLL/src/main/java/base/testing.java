@@ -14,5 +14,4 @@ public class testing {
 		System.out.println(Hand.judge(h));
 		
 	}
-
 }

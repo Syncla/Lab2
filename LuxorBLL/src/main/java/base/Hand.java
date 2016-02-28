@@ -243,6 +243,7 @@ public class Hand {
 			for (int index = 0; index < currentHand.hand.size(); index++) {
 				if (currentHand.hand.get(index).getRank()!=highCard){
 					lowCard=currentHand.hand.get(index).getRank();
+					break;
 				}
 			}
 			ArrayList<Card> kickers = new ArrayList<Card>();

@@ -14,7 +14,7 @@ public class Card {
 		
 	}
 	public static enum Suit{
-		Hearts(1), Spade(2), Club(3), Diamonds(4);
+		Hearts(1), Spades(2), Clubs(3), Diamonds(4);
 		//Int values are for sorting
 		private int suiteValue;
 		private Suit(int suiteValue){

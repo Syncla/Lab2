@@ -39,6 +39,11 @@ public class HandStrength {
 	}
 	
 	public String toString(){
-		return (getHandStrength());
+		String tempString="";
+		tempString="Hand Type: "+getHandStrength();
+		tempString+="\nHigh Card: "+getHighCard();
+		tempString+="\nLow Card: "+getLowCard();
+		tempString+="\nKickers: "+getKickers();
+		return (tempString);
 	}
 }
