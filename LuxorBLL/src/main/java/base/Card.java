@@ -18,10 +18,10 @@ public class Card {
 	public static enum Suit {
 		Hearts(1), Spades(2), Clubs(3), Diamonds(4);
 		// Int values are for sorting
-		private int suiteValue;
+		private int suitValue;
 
-		private Suit(int suiteValue) {
-			this.suiteValue = suiteValue;
+		private Suit(int suitValue) {
+			this.suitValue = suitValue;
 		}
 	}
 
