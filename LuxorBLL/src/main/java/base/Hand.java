@@ -1,7 +1,8 @@
 package base;
 
 import java.util.*;
-
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 public class Hand {
 	ArrayList<Card> hand = new ArrayList<Card>();
 
@@ -125,7 +126,7 @@ public class Hand {
 	public HandStrength isRoyalFlush(Hand currentHand) {
 		if (currentHand.hand.get(0).getRank() == Card.Rank.KING)
 			if (inOrderDecending(currentHand)) {
-				HandStrength hs = new HandStrength(Card.Rank.KING, Card.Rank.ACE, new ArrayList<Card>(), "Royal Flush",
+				HandStrength hs = new HandStrength(Card.Rank.KING, Card.Rank.ACE,currentHand.hand.get(0).getSuit(), new ArrayList<Card>(), "Royal Flush",
 						100);
 				return hs;
 			}
@@ -135,7 +136,7 @@ public class Hand {
 	public HandStrength isStraightFlush(Hand currentHand) {
 		if (suitCheck(currentHand) && inOrderDecending(currentHand)) {
 			return (new HandStrength(currentHand.hand.get(0).getRank(),
-					currentHand.hand.get(currentHand.hand.size() - 1).getRank(), new ArrayList<Card>(),
+					currentHand.hand.get(currentHand.hand.size() - 1).getRank(),currentHand.hand.get(0).getSuit(), new ArrayList<Card>(),
 					"Straight Flush", 90));
 		}
 		return (new HandStrength());
@@ -147,12 +148,16 @@ public class Hand {
 		if (duplicates.contains(4)) {
 			Card.Rank highCard = numToRank(duplicates.indexOf(4));
 			Card.Rank lowCard;
+			Card.Suit suit;
+			
 			if (currentHand.hand.get(0).getRank() == highCard) {
+				suit = currentHand.hand.get(0).getSuit();
 				lowCard = currentHand.hand.get(currentHand.hand.size() - 1).getRank();
 			} else {
+				suit = currentHand.hand.get(1).getSuit();
 				lowCard = currentHand.hand.get(0).getRank();
 			}
-			return (new HandStrength(highCard, lowCard, new ArrayList<Card>(), "Four of a Kind", 80));
+			return (new HandStrength(highCard, lowCard,suit, new ArrayList<Card>(), "Four of a Kind", 80));
 		}
 
 		return (new HandStrength());
@@ -163,7 +168,13 @@ public class Hand {
 		if (duplicates.contains(3) && duplicates.contains(2)) {
 			Card.Rank highCard = numToRank(duplicates.indexOf(3));
 			Card.Rank lowCard = numToRank(duplicates.indexOf(2));
-			return (new HandStrength(highCard, lowCard, new ArrayList<Card>(), "Full House", 70));
+			Card.Suit suit = Card.Suit.Clubs;
+			for (int index=0;index<currentHand.hand.size();index++){
+				if (currentHand.hand.get(index).getRank()==highCard){
+					suit=currentHand.hand.get(index).getSuit();
+				}
+			}
+			return (new HandStrength(highCard, lowCard,suit, new ArrayList<Card>(), "Full House", 70));
 		}
 		return (new HandStrength());
 	}
@@ -171,12 +182,13 @@ public class Hand {
 	public HandStrength isFlush(Hand currentHand) {
 		if (suitCheck(currentHand)) {
 			Card.Rank highCard = currentHand.hand.get(0).getRank();
+			Card.Suit suit = currentHand.hand.get(0).getSuit();
 			Card.Rank lowCard = currentHand.hand.get(1).getRank();
 			ArrayList<Card> kickers = new ArrayList<Card>();
 			for (int index = 2; index < currentHand.hand.size(); index++) {
 				kickers.add(currentHand.hand.get(index));
 			}
-			return (new HandStrength(highCard, lowCard, kickers, "Flush", 60));
+			return (new HandStrength(highCard, lowCard,suit, kickers, "Flush", 60));
 		}
 		return (new HandStrength());
 	}
@@ -184,12 +196,13 @@ public class Hand {
 	public HandStrength isStraight(Hand currentHand) {
 		if (inOrderDecending(currentHand)) {
 			Card.Rank highCard = currentHand.hand.get(0).getRank();
+			Card.Suit suit = currentHand.hand.get(0).getSuit();
 			Card.Rank lowCard = currentHand.hand.get(1).getRank();
 			ArrayList<Card> kickers = new ArrayList<Card>();
 			for (int index = 2; index < currentHand.hand.size(); index++) {
 				kickers.add(currentHand.hand.get(index));
 			}
-			return (new HandStrength(highCard, lowCard, kickers, "Straight", 50));
+			return (new HandStrength(highCard, lowCard, suit, kickers, "Straight", 50));
 		}
 		return (new HandStrength());
 	}
@@ -199,10 +212,17 @@ public class Hand {
 		if (duplicates.contains(3)) {
 			Card.Rank highCard = numToRank(duplicates.indexOf(3));
 			Card.Rank lowCard = Card.Rank.ACE;
+			Card.Suit suit = Card.Suit.Clubs;
+			boolean foundLow=false;
+			boolean foundSuit=false;
 			for (int index = 0; index < currentHand.hand.size(); index++) {
-				if (currentHand.hand.get(index).getRank() != highCard) {
+				if (currentHand.hand.get(index).getRank()==highCard && !foundSuit){
+					suit = currentHand.hand.get(index).getSuit();
+					foundSuit=true;
+				}
+				if (currentHand.hand.get(index).getRank() != highCard && !foundLow) {
 					lowCard = currentHand.hand.get(index).getRank();
-					break;
+					foundLow=true;
 				}
 			}
 			ArrayList<Card> kickers = new ArrayList<Card>();
@@ -211,7 +231,7 @@ public class Hand {
 					kickers.add(currentHand.hand.get(index));
 				}
 			}
-			return (new HandStrength(highCard, lowCard,kickers, "Three of a Kind", 40));
+			return (new HandStrength(highCard, lowCard, suit, kickers, "Three of a Kind", 40));
 		}
 		return (new HandStrength());
 	}
@@ -223,13 +243,17 @@ public class Hand {
 			if (firstIndex!=secondIndex){
 				Card.Rank highCard=numToRank(duplicates.lastIndexOf(2));
 				Card.Rank lowCard=numToRank(duplicates.indexOf(2));
+				Card.Suit suit = Card.Suit.Clubs;
 				ArrayList<Card> kickers = new ArrayList<Card>();
 				for (int index = 0; index < currentHand.hand.size(); index++) {
+					if (currentHand.hand.get(index).getRank()==highCard){
+						suit=currentHand.hand.get(index).getSuit();
+					}
 					if (currentHand.hand.get(index).getRank()!=highCard && currentHand.hand.get(index).getRank()!=lowCard){
 						kickers.add(currentHand.hand.get(index));
 					}
 				}
-				return (new HandStrength(highCard, lowCard,kickers, "Two Pair", 30));
+				return (new HandStrength(highCard, lowCard, suit, kickers, "Two Pair", 30));
 			}
 		}
 		return (new HandStrength());
@@ -240,11 +264,19 @@ public class Hand {
 			Card.Rank highCard=numToRank(duplicates.indexOf(2));
 			//default ACE for lowCard
 			Card.Rank lowCard= Card.Rank.ACE;
+			Card.Suit suit = Card.Suit.Clubs;
+			boolean foundLow=false;
+			boolean foundSuit=false;
 			for (int index = 0; index < currentHand.hand.size(); index++) {
-				if (currentHand.hand.get(index).getRank()!=highCard){
+				if (currentHand.hand.get(index).getRank()!=highCard && !foundLow){
 					lowCard=currentHand.hand.get(index).getRank();
-					break;
+					foundLow=true;
 				}
+				if (currentHand.hand.get(index).getRank()==highCard && !foundSuit){
+					suit=currentHand.hand.get(index).getSuit();
+					foundSuit=true;
+				}
+				
 			}
 			ArrayList<Card> kickers = new ArrayList<Card>();
 			for (int index = 0; index < currentHand.hand.size(); index++) {
@@ -252,18 +284,20 @@ public class Hand {
 					kickers.add(currentHand.hand.get(index));
 				}
 			}
-			return (new HandStrength(highCard, lowCard,kickers, "One Pair", 20));
+			return (new HandStrength(highCard, lowCard, suit, kickers, "One Pair", 20));
 		}
 		return (new HandStrength());
 	}
 	public HandStrength noPair(Hand currentHand) {
+		
 		Card.Rank highCard= currentHand.hand.get(0).getRank();
+		Card.Suit suit = currentHand.hand.get(0).getSuit();
 		Card.Rank lowCard= currentHand.hand.get(1).getRank();
 		ArrayList<Card> kickers = new ArrayList<Card>();
 		for (int index = 2; index < currentHand.hand.size(); index++) {
 				kickers.add(currentHand.hand.get(index));
 		}
-		return (new HandStrength(highCard,lowCard,kickers,"No Pair",10));
+		return (new HandStrength(highCard,lowCard,suit,kickers,"No Pair",10));
 	}
 	public String toString(){
 		String tempString="";
@@ -272,10 +306,28 @@ public class Hand {
 		}
 		return tempString;
 	}
-	public static HandStrength judge(Hand currentHand) {
+	public static HandStrength judge(Hand currentHand){
 		HandStrength hs=new HandStrength();
+		currentHand.sortSuit();
 		currentHand.sortRank();
 		HandStrength failedHand=new HandStrength();
+		Class[] judgeArgs = new Class[1];
+		judgeArgs[0] =Hand.class;
+		try {
+			Class judgeHands = Hand.class;
+			Object obj = judgeHands.newInstance();
+			for (HandStrength.HandScores handName : HandStrength.HandScores.values()){
+				Method method = judgeHands.getDeclaredMethod(handName.getHandType(), new Class[]{Hand.class});
+				HandStrength handStrength =(HandStrength)method.invoke(obj, currentHand);
+				if (!(handStrength.getHandStrength()==failedHand.getHandStrength())){
+					return handStrength;
+				}
+			}
+		}
+		catch(Exception ex){
+			ex.printStackTrace();
+		}
+		System.out.println("");
 		if (currentHand.isRoyalFlush(currentHand).getHandStrength()==failedHand.getHandStrength()){
 			if (currentHand.isStraightFlush(currentHand).getHandStrength()==failedHand.getHandStrength()){
 				if (currentHand.isFourOfAKind(currentHand).getHandStrength()==failedHand.getHandStrength()){
@@ -330,7 +382,6 @@ public class Hand {
 		 * isFlush;
 		 * isStraight; 
 		 * isThreeOfAKind; 
-		 * ---
 		 * isTwoPair; 
 		 * isOnePair; 
 		 * noPair;
@@ -339,6 +390,19 @@ public class Hand {
 		// Low Card - two pairs or Full House
 		// Hand Strength - Royal Flush Down
 		// Kickers - Cards that don't matter
+		return hs;
+	}
+	public static HandStrength judge(ArrayList<Hand> currentHands) {
+		ArrayList<HandStrength> handStrengths = new ArrayList<HandStrength>();
+		for (Hand hand : currentHands){
+			handStrengths.add(judge(hand));
+		}
+		while (handStrengths.size()>1){
+			HandStrength lowHand= handStrengths.get(0).compareTo(handStrengths.get(1));
+			int index=handStrengths.indexOf(lowHand);
+			handStrengths.remove(index);
+		}
+		HandStrength hs=handStrengths.get(0);
 		return hs;
 	}
 
