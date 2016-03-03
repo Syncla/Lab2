@@ -1,6 +1,6 @@
 package base;
 
-public class Card {
+public class Card{
 	private Rank rank;
 	private Suit suit;
 
@@ -37,7 +37,7 @@ public class Card {
 	public Suit getSuit() {
 		return this.suit;
 	}
-
+	@Override
 	public String toString() {
 		return this.getRank() + " of " + this.getSuit();
 	}

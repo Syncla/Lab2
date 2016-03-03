@@ -1,6 +1,7 @@
 package base;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Deck {
 
@@ -12,7 +13,7 @@ public class Deck {
 				deck.add(new Card(rank, suit));
 			}
 		}
-		shuffle();
+		Collections.shuffle(deck);
 	}
 	
 	public int cardsLeft() {

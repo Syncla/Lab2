@@ -8,9 +8,9 @@ public class Hand {
 	public Hand() {
 	}
 
-	public void addCard(Card newCard) {
+	public void addCard(Deck deck) {
 		// Adds a card to the hand
-		hand.add(newCard);
+		hand.add(deck.draw());
 	}
 
 	public void sortRank() {
@@ -370,5 +370,6 @@ public class Hand {
 		HandStrength hs=handStrengths.get(0);
 		return hs;
 	}
+
 
 }

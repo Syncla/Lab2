@@ -81,7 +81,33 @@ public class HandStrength {
 		tempString+="\nKickers: "+getKickers();
 		return (tempString);
 	}
-	
+	public boolean equals(HandStrength hsToCompare){
+		boolean equal=true;
+		if (this.getScore()!=hsToCompare.getScore()){
+			return false;
+		}
+		if (this.getScore()==hsToCompare.getScore()){
+			if (this.getHighCard().ordinal()!=hsToCompare.getHighCard().ordinal()){
+				return false;
+			}
+			if (this.getHighCard().ordinal()==hsToCompare.getHighCard().ordinal()){
+				if (this.getLowCard().ordinal()!=hsToCompare.getLowCard().ordinal()){
+					return false;
+				}
+				if (this.getLowCard().ordinal()==hsToCompare.getLowCard().ordinal()){
+					for (int index=0;index<this.getKickers().size();index++){
+						if (this.getKickers().get(index).getRank().ordinal()!=hsToCompare.getKickers().get(index).getRank().ordinal()){
+							return false;
+						}
+					}
+					if (this.getSuit().ordinal()!=hsToCompare.getSuit().ordinal()){
+						return false;
+					}
+				}
+			}
+		}
+		return equal;
+	}
 	public HandStrength compareTo(HandStrength hsToCompare){
 		if (this.getScore()>hsToCompare.getScore()){
 			return hsToCompare;
