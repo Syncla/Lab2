@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import exceptions.DeckException;
 import exceptions.HandException;
 
-public class Hand implements Comparable{
+public class Hand{
 	private ArrayList<Card> hand = new ArrayList<Card>();
 	public static enum HandCount{
 		FirstCard(0),SecondCard(2),Pair(2),ThreeOfAKind(3),FourOfAKind(4);
@@ -14,14 +14,26 @@ public class Hand implements Comparable{
 			this.handCount=handCount;
 		}
 	}
+	/**
+	 * Creates a an array of card objects named hand
+	 */
 	public Hand() {
 	}
 
+	/**
+	 * @param deck
+	 * @throws DeckException
+	 * Adds a card to the hand by drawing from the deck
+	 */
 	public void addCard(Deck deck) throws DeckException {
 		// Adds a card to the hand
 		hand.add(deck.draw());
 	}
 
+	/**
+	 * Sorts the hand based on the rank of each card from highest rank (KING) to 
+	 * lowest rank (ACE)
+	 */
 	public void sortRank() {
 		// Sorts based on rank
 		int size = this.hand.size();
@@ -40,9 +52,12 @@ public class Hand implements Comparable{
 		} while (swapped);
 	}
 
+	/**
+	 * Sorts the hand based on the suit of each card
+	 */
 	public void sortSuit() {
-		// Sorts based on suite
-		// To sort by both suite and rank, call sortRank and then sortSuite
+		// Sorts based on suit
+		// To sort by both suit and rank, call sortRank and then sortSuit
 		int size = this.hand.size();
 		boolean swapped;
 		do {
@@ -59,25 +74,12 @@ public class Hand implements Comparable{
 		} while (swapped);
 	}
 
-	public boolean decending(Hand currentHand) {
-		for (int index = 0; index < currentHand.hand.size() - 1; index++) {
-			// If the last card is an Ace then stop
-			if (index + 1 == currentHand.hand.size() - 1
-					&& currentHand.hand.get(index + 1).getRank() == Card.Rank.ACE) {
-				break;
-			}
-			// If the next card has a rank that is equal to the current card
-			// return false (Note, hand should already be in order of highest =
-			// index 0, to lowest=last index
-			else if (currentHand.hand.get(index).getRank().ordinal() > currentHand.hand.get(index + 1).getRank()
-					.ordinal()) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public boolean inOrderDecending(Hand currentHand) {
+	/**
+	 * @param currentHand
+	 * @return
+	 * Checks to see that the the hand is in order by descending rank. If not, the method returns false
+	 */
+	public boolean inOrderDescending(Hand currentHand) {
 		for (int index = 0; index < currentHand.hand.size() - 1; index++) {
 			// If the last card is an Ace then stop
 			if (currentHand.hand.get(index).getRank().ordinal() != currentHand.hand.get(index + 1).getRank().ordinal() + 1) {
@@ -87,6 +89,11 @@ public class Hand implements Comparable{
 		return true;
 	}
 
+	/**
+	 * @param currentHand
+	 * @return
+	 * Checks to see if all the suits in the hand are the same i.e. set up for a flush
+	 */
 	public boolean suitCheck(Hand currentHand) {
 		// Checks if all the cards are of the same suite
 		for (int index = 0; index < currentHand.hand.size() - 1; index++) {
@@ -97,6 +104,12 @@ public class Hand implements Comparable{
 		return true;
 	}
 
+	/**
+	 * @param currentHand
+	 * @return
+	 * Creates an array of integers and uses the ranks of the cards as the index to count how many of each card rank there are. Returns
+	 * the array of card ranks
+	 */
 	public ArrayList<Integer> sets(Hand currentHand) {
 		// Returns an array that tells how many cards of
 		// each rank are in the hand
@@ -116,6 +129,11 @@ public class Hand implements Comparable{
 
 	}
 
+	/**
+	 * @param rankNum
+	 * @returns rank
+	 * Converts an integer to a corresponding card rank. Passing in an 11 would return JACK
+	 */
 	public Card.Rank numToRank(int rankNum) {
 		// Returns the rank of a Card given its numerical
 		// value
@@ -127,9 +145,14 @@ public class Hand implements Comparable{
 		return Card.Rank.ACE;
 	}
 
+	/**
+	 * @param currentHand
+	 * @returns 100 if true
+	 * Tests the hand of cards to see if a Royal Flush condition is met (5 descending cards starting at the highest all with the same suit)
+	 */
 	public HandStrength isRoyalFlush(Hand currentHand) {
 		if (currentHand.hand.get(Hand.HandCount.FirstCard.ordinal()).getRank() == Card.Rank.KING)
-			if (inOrderDecending(currentHand) && suitCheck(currentHand)) {
+			if (inOrderDescending(currentHand) && suitCheck(currentHand)) {
 				HandStrength hs = new HandStrength(Card.Rank.KING, Card.Rank.QUEEN,currentHand.hand.get(Hand.HandCount.FirstCard.ordinal()).getSuit(), new ArrayList<Card>(), "Royal Flush",
 						100);
 				return hs;
@@ -137,15 +160,25 @@ public class Hand implements Comparable{
 		return (new HandStrength());
 	}
 
+	/**
+	 * @param currentHand
+	 * @returns 90 if true
+	 * Tests the hand of cards to see if a Straight Flush condition is met (5 descending cards not starting at the highest rank all with the same suit)
+	 */
 	public HandStrength isStraightFlush(Hand currentHand) {
-		if (suitCheck(currentHand) && inOrderDecending(currentHand)) {
-			return (new HandStrength(currentHand.hand.get(Hand.HandCount.FirstCard.ordinal()).getRank(),
-					currentHand.hand.get(currentHand.hand.size() - 1).getRank(),currentHand.hand.get(Hand.HandCount.FirstCard.ordinal()).getSuit(), new ArrayList<Card>(),
+		if (suitCheck(currentHand) && inOrderDescending(currentHand)) {
+			return (new HandStrength(currentHand.hand.get(0).getRank(),
+					currentHand.hand.get(1).getRank(),currentHand.hand.get(Hand.HandCount.FirstCard.ordinal()).getSuit(), new ArrayList<Card>(),
 					"Straight Flush", 90));
 		}
 		return (new HandStrength());
 	}
 
+	/**
+	 * @param currentHand
+	 * @returns 80 if true
+	 * Tests the hand of cards to see if the Four of a Kind condition is met (4 of one rank and 1 kicker)
+	 */
 	public HandStrength isFourOfAKind(Hand currentHand) {
 		ArrayList<Integer> duplicates = sets(currentHand);
 
@@ -161,11 +194,11 @@ public class Hand implements Comparable{
 					suit = currentHand.hand.get(index).getSuit();
 					foundHighCard=false;
 				}
-				else if (foundLowCard){
+				else if (foundLowCard && currentHand.hand.get(index).getRank()!=highCard){
 					lowCard=currentHand.hand.get(index).getRank();
 					foundLowCard=false;
 				}
-				else{
+				else if (currentHand.hand.get(index).getRank()!=highCard && currentHand.hand.get(index).getRank()!=lowCard){
 					kickers.add(currentHand.hand.get(index));
 				}
 			}
@@ -175,6 +208,11 @@ public class Hand implements Comparable{
 		return (new HandStrength());
 	}
 
+	/**
+	 * @param currentHand
+	 * @returns 70 if true
+	 * Tests the hand of cards to see if the current hand is a Full House (3 of one rank and 2 of another)
+	 */
 	public HandStrength isFullHouse(Hand currentHand) {
 		ArrayList<Integer> duplicates = sets(currentHand);
 		if (duplicates.contains(Hand.HandCount.ThreeOfAKind.ordinal()) && duplicates.contains(Hand.HandCount.Pair.ordinal())) {
@@ -188,15 +226,17 @@ public class Hand implements Comparable{
 					suit = currentHand.hand.get(index).getSuit();
 					foundHighCard=false;
 				}
-				else if (currentHand.hand.get(index).getRank()!=highCard && currentHand.hand.get(index).getRank()!=lowCard){
-					lowCard=currentHand.hand.get(index).getRank();
-				}
 			}
 			return (new HandStrength(highCard, lowCard,suit, kickers, "Full House", 70));
 		}
 		return (new HandStrength());
 	}
 
+	/**
+	 * @param currentHand
+	 * @returns 60 if true
+	 * Tests to see if the hand of cards is a Flush (all 5 cards have the same suit)
+	 */
 	public HandStrength isFlush(Hand currentHand) {
 		if (suitCheck(currentHand)) {
 			Card.Rank highCard = currentHand.hand.get(0).getRank();
@@ -211,8 +251,13 @@ public class Hand implements Comparable{
 		return (new HandStrength());
 	}
 
+	/**
+	 * checks if hand is a straight
+	 * returns hand strength of 50 if it's a straight
+	 * 
+	 */
 	public HandStrength isStraight(Hand currentHand) {
-		if (inOrderDecending(currentHand)) {
+		if (inOrderDescending(currentHand)) {
 			Card.Rank highCard = currentHand.hand.get(0).getRank();
 			Card.Suit suit = currentHand.hand.get(0).getSuit();
 			Card.Rank lowCard = currentHand.hand.get(1).getRank();
@@ -225,6 +270,11 @@ public class Hand implements Comparable{
 		return (new HandStrength());
 	}
 
+	/**
+	 * checks to see if hand is three of a kind
+	 * returns hand strength of 40 if true
+	 * 
+	 */
 	public HandStrength isThreeOfAKind(Hand currentHand) {
 		ArrayList<Integer> duplicates = sets(currentHand);
 		if (duplicates.contains(3)) {
@@ -253,19 +303,27 @@ public class Hand implements Comparable{
 		}
 		return (new HandStrength());
 	}
+	
+	/**
+	 * checks if hand is a two pair
+	 * returns hand strength of 30 if true
+	 * 
+	 */
 	public HandStrength isTwoPair(Hand currentHand) {
 		ArrayList<Integer> duplicates = sets(currentHand);
 		if (duplicates.contains(2)) {
 			int firstIndex=duplicates.indexOf(2);
 			int secondIndex=duplicates.lastIndexOf(2);
 			if (firstIndex!=secondIndex){
-				Card.Rank highCard=numToRank(duplicates.lastIndexOf(2));
-				Card.Rank lowCard=numToRank(duplicates.indexOf(2));
+				Card.Rank highCard=numToRank(secondIndex);
+				Card.Rank lowCard=numToRank(firstIndex);
 				Card.Suit suit = Card.Suit.Clubs;
+				boolean foundSuit=false;
 				ArrayList<Card> kickers = new ArrayList<Card>();
 				for (int index = 0; index < currentHand.hand.size(); index++) {
-					if (currentHand.hand.get(index).getRank()==highCard){
+					if (currentHand.hand.get(index).getRank()==highCard &&!foundSuit){
 						suit=currentHand.hand.get(index).getSuit();
+						foundSuit=true;
 					}
 					if (currentHand.hand.get(index).getRank()!=highCard && currentHand.hand.get(index).getRank()!=lowCard){
 						kickers.add(currentHand.hand.get(index));
@@ -276,6 +334,12 @@ public class Hand implements Comparable{
 		}
 		return (new HandStrength());
 	}
+	
+	/**
+	 * checks if hand contains one pair
+	 * returns hand strength of 20 if true
+	 * 
+	 */
 	public HandStrength isOnePair(Hand currentHand) {
 		ArrayList<Integer> duplicates = sets(currentHand);
 		if (duplicates.contains(2)) {
@@ -306,6 +370,12 @@ public class Hand implements Comparable{
 		}
 		return (new HandStrength());
 	}
+	
+	/**
+	 * catch all hand strength
+	 * returns 10 if all other hand strength tests fail
+	 * 
+	 */
 	public HandStrength noPair(Hand currentHand) {
 		
 		Card.Rank highCard= currentHand.hand.get(0).getRank();
@@ -317,6 +387,10 @@ public class Hand implements Comparable{
 		}
 		return (new HandStrength(highCard,lowCard,suit,kickers,"No Pair",10));
 	}
+	
+	/**
+	 * returns string describing each card in hand
+	 */
 	@Override
 	public String toString(){
 		String tempString="";
@@ -325,6 +399,13 @@ public class Hand implements Comparable{
 		}
 		return tempString;
 	}
+	
+	/**
+	 * sorts hand in order of suit and rank
+	 * uses hand strength tests to find hand score
+	 * returns hand score
+	 * 
+	 */
 	public static HandStrength judge(Hand currentHand){
 		if (currentHand.hand.size()!=5){
 			//Throw error
@@ -333,6 +414,7 @@ public class Hand implements Comparable{
 		HandStrength hs=new HandStrength();
 		currentHand.sortSuit();
 		currentHand.sortRank();
+		//System.out.println(currentHand.toString());
 		HandStrength failedHand=new HandStrength();
 		Class[] judgeArgs = new Class[1];
 		judgeArgs[0] =Hand.class;
@@ -370,6 +452,12 @@ public class Hand implements Comparable{
 		// Kickers - Cards that don't matter
 		return hs;
 	}
+	
+	/**
+	 * finds hand strength of array list of hands
+	 * returns hand score of each
+	 * 
+	 */
 	public static HandStrength judge(ArrayList<Hand> currentHands) {
 		ArrayList<HandStrength> handStrengths = new ArrayList<HandStrength>();
 		for (Hand hand : currentHands){
@@ -382,18 +470,5 @@ public class Hand implements Comparable{
 		}
 		HandStrength hs=handStrengths.get(0);
 		return hs;
-	}
-
-	@Override
-	public int compareTo(Object o) {
-		Hand handToCompare = (Hand)o;
-		for (int index=0;index<this.hand.size();index++){
-			if (!(this.hand.get(index).equals(handToCompare.hand.get(index)))){
-				return -1;
-			}
-		}
-		return 0;
-	}
-
-
+	}	 
 }

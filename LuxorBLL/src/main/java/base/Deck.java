@@ -3,10 +3,14 @@ package base;
 import java.util.ArrayList;
 import java.util.Collections;
 import exceptions.DeckException;
+
 public class Deck {
 
 	private ArrayList<Card> deck = new ArrayList<Card>();
 
+	/*
+	 * creates a deck of 52 unique cards
+	 */
 	public Deck() {
 		for (Card.Suit suit : Card.Suit.values()) {
 			for (Card.Rank rank : Card.Rank.values()) {
@@ -15,11 +19,14 @@ public class Deck {
 		}
 		shuffle(deck);
 	}
-	
-	public int cardsLeft() {
+
+	private int cardsLeft() {
 		return deck.size();
 	}
 
+	/*
+	 * shuffles the deck
+	 */
 	public static void shuffle(ArrayList<Card> deck) {
 		// Using Fisher Yates shuffle
 		int size = deck.size();
@@ -34,10 +41,14 @@ public class Deck {
 		}
 	}
 
+	/**
+	 * removes card from deck
+	 * returns removed card
+	 **/
 	public Card draw() throws DeckException {
-		if (cardsLeft()==0){
+		if (cardsLeft() == 0) {
 			throw new DeckException(this);
 		}
-		return this.deck.remove(0);		
+		return this.deck.remove(0);
 	}
 }
