@@ -12,7 +12,7 @@ public class Card{
 		private Rank(int rankValue) {
 			this.rankValue = rankValue;
 		}
-
+		
 	}
 
 	public static enum Suit {

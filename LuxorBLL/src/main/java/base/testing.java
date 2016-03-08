@@ -2,6 +2,8 @@ package base;
 
 import java.util.ArrayList;
 
+import exceptions.DeckException;
+
 public class testing {
 
 	public static void main(String[] args) {
@@ -11,13 +13,22 @@ public class testing {
 		Hand h1 = new Hand();
 		Hand h2= new Hand();
 		for (int i=0;t.cardsLeft()>0;i++){
-			System.out.println(t.draw());
+			try {
+				System.out.println(t.draw());
+			} catch (DeckException e) {
+				e.printStackTrace();
+			}
 		}
 		System.out.println();
 		for (int i = 0; i < 5; i++) {
-			h.addCard(d);
-			h1.addCard(d);
-			h2.addCard(d);
+			try{
+				h.addCard(d);
+				h1.addCard(d);
+				h2.addCard(d);
+			}
+			catch(Exception ex){
+				ex.printStackTrace();
+			}
 			
 		}
 		ArrayList<Hand> hands = new ArrayList<Hand>();

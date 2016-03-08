@@ -2,13 +2,22 @@ package base;
 
 import java.util.*;
 import java.lang.reflect.Method;
-public class Hand {
-	private ArrayList<Card> hand = new ArrayList<Card>();
+import exceptions.DeckException;
+import exceptions.HandException;
 
+public class Hand implements Comparable{
+	private ArrayList<Card> hand = new ArrayList<Card>();
+	public static enum HandCount{
+		FirstCard(0),SecondCard(2),Pair(2),ThreeOfAKind(3),FourOfAKind(4);
+		private int handCount;
+		private HandCount(int handCount){
+			this.handCount=handCount;
+		}
+	}
 	public Hand() {
 	}
 
-	public void addCard(Deck deck) {
+	public void addCard(Deck deck) throws DeckException {
 		// Adds a card to the hand
 		hand.add(deck.draw());
 	}
@@ -119,9 +128,9 @@ public class Hand {
 	}
 
 	public HandStrength isRoyalFlush(Hand currentHand) {
-		if (currentHand.hand.get(0).getRank() == Card.Rank.KING)
-			if (inOrderDecending(currentHand)) {
-				HandStrength hs = new HandStrength(Card.Rank.KING, Card.Rank.QUEEN,currentHand.hand.get(0).getSuit(), new ArrayList<Card>(), "Royal Flush",
+		if (currentHand.hand.get(Hand.HandCount.FirstCard.ordinal()).getRank() == Card.Rank.KING)
+			if (inOrderDecending(currentHand) && suitCheck(currentHand)) {
+				HandStrength hs = new HandStrength(Card.Rank.KING, Card.Rank.QUEEN,currentHand.hand.get(Hand.HandCount.FirstCard.ordinal()).getSuit(), new ArrayList<Card>(), "Royal Flush",
 						100);
 				return hs;
 			}
@@ -130,8 +139,8 @@ public class Hand {
 
 	public HandStrength isStraightFlush(Hand currentHand) {
 		if (suitCheck(currentHand) && inOrderDecending(currentHand)) {
-			return (new HandStrength(currentHand.hand.get(0).getRank(),
-					currentHand.hand.get(currentHand.hand.size() - 1).getRank(),currentHand.hand.get(0).getSuit(), new ArrayList<Card>(),
+			return (new HandStrength(currentHand.hand.get(Hand.HandCount.FirstCard.ordinal()).getRank(),
+					currentHand.hand.get(currentHand.hand.size() - 1).getRank(),currentHand.hand.get(Hand.HandCount.FirstCard.ordinal()).getSuit(), new ArrayList<Card>(),
 					"Straight Flush", 90));
 		}
 		return (new HandStrength());
@@ -140,8 +149,8 @@ public class Hand {
 	public HandStrength isFourOfAKind(Hand currentHand) {
 		ArrayList<Integer> duplicates = sets(currentHand);
 
-		if (duplicates.contains(4)) {
-			Card.Rank highCard = numToRank(duplicates.indexOf(4));
+		if (duplicates.contains(Hand.HandCount.FourOfAKind.ordinal())) {
+			Card.Rank highCard = numToRank(duplicates.indexOf(Hand.HandCount.FourOfAKind.ordinal()));
 			Card.Rank lowCard = Card.Rank.ACE;
 			Card.Suit suit = Card.Suit.Clubs;
 			ArrayList<Card> kickers = new ArrayList<Card>();
@@ -168,7 +177,7 @@ public class Hand {
 
 	public HandStrength isFullHouse(Hand currentHand) {
 		ArrayList<Integer> duplicates = sets(currentHand);
-		if (duplicates.contains(3) && duplicates.contains(2)) {
+		if (duplicates.contains(Hand.HandCount.ThreeOfAKind.ordinal()) && duplicates.contains(Hand.HandCount.Pair.ordinal())) {
 			Card.Rank highCard = numToRank(duplicates.indexOf(3));
 			Card.Rank lowCard = numToRank(duplicates.indexOf(2));
 			Card.Suit suit = Card.Suit.Clubs;
@@ -317,6 +326,10 @@ public class Hand {
 		return tempString;
 	}
 	public static HandStrength judge(Hand currentHand){
+		if (currentHand.hand.size()!=5){
+			//Throw error
+			return new HandStrength();
+		}
 		HandStrength hs=new HandStrength();
 		currentHand.sortSuit();
 		currentHand.sortRank();
@@ -369,6 +382,17 @@ public class Hand {
 		}
 		HandStrength hs=handStrengths.get(0);
 		return hs;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		Hand handToCompare = (Hand)o;
+		for (int index=0;index<this.hand.size();index++){
+			if (!(this.hand.get(index).equals(handToCompare.hand.get(index)))){
+				return -1;
+			}
+		}
+		return 0;
 	}
 
 

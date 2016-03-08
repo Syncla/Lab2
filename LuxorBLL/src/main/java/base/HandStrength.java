@@ -108,6 +108,33 @@ public class HandStrength {
 		}
 		return equal;
 	}
+	public boolean equals(Object o){
+		HandStrength hs = (HandStrength)o;
+		if (this.getScore()!=hs.getScore()){
+			return false;
+		}
+		if (this.getHighCard()!=hs.getHighCard()){
+			return false;
+		}
+		if (this.getLowCard()!=hs.getLowCard()){
+			return false;
+		}
+		if (this.getSuit()!=hs.getSuit()){
+			return false;
+		}
+		if (this.getHandStrength()!=hs.getHandStrength()){
+			return false;
+		}
+		if (this.getKickers().size()!=hs.getKickers().size()){
+			return false;
+		}
+		for (int index=0;index<this.getKickers().size();index++){
+			if (this.getKickers().get(index)!=hs.getKickers().get(index)){
+				return false;
+			}
+		}
+		return true;
+	}
 	public HandStrength compareTo(HandStrength hsToCompare){
 		if (this.getScore()>hsToCompare.getScore()){
 			return hsToCompare;
@@ -147,6 +174,6 @@ public class HandStrength {
 				}
 			}
 		}
-		return this;
+		return new HandStrength();
 	}
 }
